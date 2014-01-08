@@ -14,7 +14,7 @@ daveExt = {
 
   requestDaves: function() {
     this.xhr = new XMLHttpRequest();
-    this.xhr.open("GET", "http://localhost:3000/faces.json", true);
+    this.xhr.open("GET", "http://facesofdave.org/faces.json", true);
     this.xhr.onreadystatechange = this.populateDaves;
     this.xhr.send();
   },
@@ -30,7 +30,7 @@ daveExt = {
   injectDaves: function() {
     $target = $('.faceBox:not(.daved, .faceBoxHidden)').show();
     $target.each(function(index,ele) {
-      var $img = $('<img>').attr('src', 'http://localhost:3000/' + daveExt.Daves[1].image);
+      var $img = $('<img>').attr('src', 'http://facesofdave.org/' + daveExt.Daves[Math.floor((Math.random()*daveExt.Daves.length)+1)].image);
 
       $img.css({'position': 'absolute',
                 'top': '0px',
@@ -38,7 +38,7 @@ daveExt = {
                 'width': $(ele).width(),
                 'z-index': $(ele).width()+1000});
 
-      $target.addClass('daved').append($img);
+      $(ele).addClass('daved').append($img);
     });
   },
 }

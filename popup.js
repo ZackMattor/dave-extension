@@ -12,14 +12,14 @@ var kittenGenerator = {
   requestKittens: function() {
 
     var xhr = new XMLHttpRequest();
-    xhr.open("GET", "http://localhost:3000/faces.json", true);
+    xhr.open("GET", "http://facesofdave.org/faces.json", true);
     xhr.onreadystatechange = function() {
       if (xhr.readyState == 4) {
         faces=JSON.parse(this.responseText).faces
         debugger
         for (var i = 0; i < faces.length; i++) {
           var $img = $('<img>');
-          $img.attr('src', "http://localhost:3000/" + faces[i].image);
+          $img.attr('src', "http://facesofdave.org/" + faces[i].image);
           $('body').append($img);
         }
       }
