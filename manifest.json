@@ -3,7 +3,7 @@
 
   "name": "One-click Dave",
   "description": "This extension makes your life hell.",
-  "version": "6.66",
+  "version": "6.67",
   "content_security_policy": "script-src 'self' http://localhost; object-src 'self'",
 
 
