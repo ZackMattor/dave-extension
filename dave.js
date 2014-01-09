@@ -60,7 +60,7 @@ DAVE = {
       DAVE._collection=JSON.parse(this.responseText).faces;
 
       //trigger the onLoadedCallback
-      typeof DAVE._onLoadedCallback === 'function' && DAVE._onLoadedCallback();
+      typeof DAVE._onLoadedCallback === 'function' && DAVE._onLoadedCallback(DAVE.all());
     }
   },
 
@@ -74,7 +74,7 @@ daveExt = {
     DAVE.requestDaves(config.SOURCE, this.onLoad);
   },
 
-  onLoad: function() {
+  onLoad: function(daves) {
     debugger
     //REMOVED: setInterval for scanning facebook... need to re-add that
   },
