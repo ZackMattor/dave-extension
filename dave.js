@@ -4,17 +4,89 @@ $(document).ready(function() {
   daveExt.init();
 });
 
-daveExt = {
-  Daves: [],
-  xhr: null,
+config = {
+  SOURCE: 'http://facesofdave.org/' 
+}
 
-  init: function() {
-    this.requestDaves();
+DAVE = {
+  
+  //Our "public" xhr XMLHttpRequest
+  xhr: null,
+  
+  //Collection of daves
+  _collection: null,
+
+  _onLoadedCallback: null,
+
+ /**
+  * Returns all faces from the DAVE
+  * @return {array}
+  */
+  all: function() {
+    if(typeof _collection === 'undefined') {
+      this.requestDaves(config.SOURCE);
+    }
+
+    return this._collection || [];
   },
 
+ /**
+ * Retruns a random face
+
+ /**
+  * Request/Refreshes faces from the REST server
+  * @param {number} b
+  * @param (function) callback
+  * @return {undefined}
+  */
+  requestDaves: function(domain, callback) {
+    var xhr = this.xhr = this.xhr || new XMLHttpRequest();
+
+    this._onLoadedCallback = callback;
+
+    xhr.open("GET", domain + "faces.json", true);
+    xhr.onreadystatechange = this._populateDaves;
+    xhr.send();
+
+  },
+
+ /**
+  * CALLBACK to the xhr request on ready state change
+  * @param {number} b
+  * @return {undefined}
+  */
+  _populateDaves: function() {
+    if (DAVE.xhr.readyState == 4) {
+      DAVE._collection=JSON.parse(this.responseText).faces;
+
+      //trigger the onLoadedCallback
+      typeof DAVE._onLoadedCallback === 'function' && DAVE._onLoadedCallback();
+    }
+  },
+
+
+}
+
+daveExt = {
+  Daves: [],
+
+  init: function() {
+    DAVE.requestDaves(config.SOURCE, this.onLoad);
+  },
+
+  onLoad: function() {
+    debugger
+    //REMOVED: setInterval for scanning facebook... need to re-add that
+  },
+
+ /**
+  * Request faces from the REST server
+  * @param {number} b
+  * @return {undefined}
+  */
   requestDaves: function() {
     this.xhr = new XMLHttpRequest();
-    this.xhr.open("GET", "http://facesofdave.org/faces.json", true);
+    this.xhr.open("GET", config.SOURCE + "faces.json", true);
     this.xhr.onreadystatechange = this.populateDaves;
     this.xhr.send();
   },
@@ -30,7 +102,7 @@ daveExt = {
   injectDaves: function() {
     $target = $('.faceBox:not(.daved, .faceBoxHidden)').show();
     $target.each(function(index,ele) {
-      var $img = $('<img>').attr('src', 'http://facesofdave.org/' + daveExt.Daves[Math.floor((Math.random()*daveExt.Daves.length)+1)].image);
+      var $img = $('<img>').attr('src', 'http://facesofdave.org/' + daveExt.Daves[Math.floor((Math.random()*daveExt.Daves.length))].image);
 
       $img.css({'position': 'absolute',
                 'top': '0px',
@@ -42,3 +114,4 @@ daveExt = {
     });
   },
 }
+
