@@ -23,19 +23,36 @@ DAVE = {
   * @return {array}
   */
   all: function() {
-    if(typeof _collection === 'undefined') {
-      this.requestDaves(config.SOURCE);
-    }
-
-    return this._collection || [];
+    return this._collection;
+  },
+ 
+ /**
+  * Returns the face at the desired position
+  * @params {number}
+  * @return {object} faceObject
+  */
+  find: function(index) {
+    return this._collection[index];
+  },
+ 
+ /** @STUB
+  * Retruns a random face
+  */
+  random: function() {
+    randomIndex = Math.floor(Math.random() * this.length());
+    return this.find(randomIndex);
   },
 
  /**
- * Retruns a random face
+  * Returns the length of the collection
+  * @return {count} (-1 if not loaded)
+  */
+  length: function() {
+    return this._collection.length || -1
+  },
 
  /**
   * Request/Refreshes faces from the REST server
-  * @param {number} b
   * @param (function) callback
   * @return {undefined}
   */
@@ -52,20 +69,17 @@ DAVE = {
 
  /**
   * CALLBACK to the xhr request on ready state change
-  * @param {number} b
   * @return {undefined}
   */
   _populateDaves: function() {
     if (DAVE.xhr.readyState == 4) {
-      DAVE._collection=JSON.parse(this.responseText).faces;
+      DAVE._collection = JSON.parse(this.responseText).faces;
 
       //trigger the onLoadedCallback
-      typeof DAVE._onLoadedCallback === 'function' && DAVE._onLoadedCallback(DAVE.all());
+      typeof DAVE._onLoadedCallback === 'function' && DAVE._onLoadedCallback.call(DAVE, DAVE.all());
     }
   },
-
-
-}
+};
 
 daveExt = {
   Daves: [],
@@ -75,34 +89,13 @@ daveExt = {
   },
 
   onLoad: function(daves) {
-    debugger
-    //REMOVED: setInterval for scanning facebook... need to re-add that
-  },
-
- /**
-  * Request faces from the REST server
-  * @param {number} b
-  * @return {undefined}
-  */
-  requestDaves: function() {
-    this.xhr = new XMLHttpRequest();
-    this.xhr.open("GET", config.SOURCE + "faces.json", true);
-    this.xhr.onreadystatechange = this.populateDaves;
-    this.xhr.send();
-  },
-
-  populateDaves: function() {
-    if (daveExt.xhr.readyState == 4) {
-      console.log('faces found');
-      daveExt.Daves=JSON.parse(this.responseText).faces;
-      setInterval(daveExt.injectDaves, 200);
-    }
+    setInterval(daveExt.injectDaves, 200)
   },
 
   injectDaves: function() {
     $target = $('.faceBox:not(.daved, .faceBoxHidden)').show();
     $target.each(function(index,ele) {
-      var $img = $('<img>').attr('src', 'http://facesofdave.org/' + daveExt.Daves[Math.floor((Math.random()*daveExt.Daves.length))].image);
+      var $img = $('<img>').attr('src', 'http://facesofdave.org/' + DAVE.random().image);
 
       $img.css({'position': 'absolute',
                 'top': '0px',
@@ -113,5 +106,4 @@ daveExt = {
       $(ele).addClass('daved').append($img);
     });
   },
-}
-
+};
