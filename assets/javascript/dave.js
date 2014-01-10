@@ -1,13 +1,6 @@
-$(document).ready(function() {
-  console.log('DAVE IS HERE');
-
-  daveExt.init();
-});
-
-config = {
-  SOURCE: 'http://facesofdave.org/' 
-}
-
+/*********
+ * DAVE is our object that handles interaction with the actual faces. :)
+ */
 DAVE = {
   
   //Our "public" xhr XMLHttpRequest
@@ -35,8 +28,9 @@ DAVE = {
     return this._collection[index];
   },
  
- /** @STUB
+ /**
   * Retruns a random face
+  * @return {object} faceObject
   */
   random: function() {
     randomIndex = Math.floor(Math.random() * this.length());
@@ -53,8 +47,7 @@ DAVE = {
 
  /**
   * Request/Refreshes faces from the REST server
-  * @param (function) callback
-  * @return {undefined}
+  * @param {Function} callback(daves): called after model loaded 
   */
   requestDaves: function(domain, callback) {
     var xhr = this.xhr = this.xhr || new XMLHttpRequest();
@@ -69,7 +62,7 @@ DAVE = {
 
  /**
   * CALLBACK to the xhr request on ready state change
-  * @return {undefined}
+  * @calls {_onLoadedCallback}(daves)
   */
   _populateDaves: function() {
     if (DAVE.xhr.readyState == 4) {
@@ -78,32 +71,5 @@ DAVE = {
       //trigger the onLoadedCallback
       typeof DAVE._onLoadedCallback === 'function' && DAVE._onLoadedCallback.call(DAVE, DAVE.all());
     }
-  },
-};
-
-daveExt = {
-  Daves: [],
-
-  init: function() {
-    DAVE.requestDaves(config.SOURCE, this.onLoad);
-  },
-
-  onLoad: function(daves) {
-    setInterval(daveExt.injectDaves, 200)
-  },
-
-  injectDaves: function() {
-    $target = $('.faceBox:not(.daved, .faceBoxHidden)').show();
-    $target.each(function(index,ele) {
-      var $img = $('<img>').attr('src', 'http://facesofdave.org/' + DAVE.random().image);
-
-      $img.css({'position': 'absolute',
-                'top': '0px',
-                'left': '0px',
-                'width': $(ele).width(),
-                'z-index': $(ele).width()+1000});
-
-      $(ele).addClass('daved').append($img);
-    });
   },
 };
