@@ -1,14 +1,16 @@
 $(document).ready(function() {
   console.log('DAVE IS HERE');
 
-  daveExt.init();
+  if(localStorage.facebook) {
+    facebookExt.init();
+  }
 });
 
 config = {
   SOURCE: 'http://facesofdave.org/',
 };
 
-daveExt = {
+facebookExt = {
   Daves: [],
 
   init: function() {
@@ -16,7 +18,7 @@ daveExt = {
   },
 
   onLoad: function(daves) {
-    setInterval(daveExt.injectDaves, 200)
+    setInterval(facebookExt.injectDaves, 200)
   },
 
   injectDaves: function() {
