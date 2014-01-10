@@ -1,6 +1,9 @@
 $(document).ready(function() {
   console.log('DAVE IS HERE');
 
+  //http://stackoverflow.com/questions/3937000/chrome-extension-accessing-localstorage-in-content-script
+  //LOAD LOCALSTORAGE FROM DROPDOWN!
+
   if(localStorage.facebook) {
     facebookExt.init();
   }
