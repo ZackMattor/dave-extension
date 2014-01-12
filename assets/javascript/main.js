@@ -25,7 +25,7 @@ facebookExt = {
   },
 
   injectDaves: function() {
-    $target = $('.faceBox:not(.daved, .faceBoxHidden)').show();
+    $target = $('.faceBox:not(.daved, .faceBoxHidden), .tagBox:not(.daved)').show();
     $target.each(function(index,ele) {
       var $img = $('<img>').attr('src', 'http://facesofdave.org/' + DAVE.random().image);
 
