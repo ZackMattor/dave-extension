@@ -1,12 +1,10 @@
 $(document).ready(function() {
-  console.log('DAVE IS HERE');
-
-  //http://stackoverflow.com/questions/3937000/chrome-extension-accessing-localstorage-in-content-script
-  //LOAD LOCALSTORAGE FROM DROPDOWN!
-
-  if(localStorage.facebook) {
-    facebookExt.init();
-  }
+  chrome.storage.local.get('facebook', function(item) {
+    if(item.facebook) {
+      console.log('DAVE IS HERE');
+      facebookExt.init()
+    }
+  });
 });
 
 config = {
@@ -27,7 +25,7 @@ facebookExt = {
   injectDaves: function() {
     $target = $('.faceBox:not(.daved, .faceBoxHidden), .tagBox:not(.daved)').show();
     $target.each(function(index,ele) {
-      var $img = $('<img>').attr('src', 'http://facesofdave.org/' + DAVE.random().image);
+      var $img = $('<img>').attr('src', DAVE.random().image);
 
       $img.css({'position': 'absolute',
                 'top': '0px',

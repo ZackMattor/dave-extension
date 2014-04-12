@@ -10,7 +10,6 @@ var kittenGenerator = {
    * @public
    */
   requestKittens: function() {
-
     var xhr = new XMLHttpRequest();
     xhr.open("GET", "http://facesofdave.org/faces.json", true);
     xhr.onreadystatechange = function() {
@@ -19,7 +18,7 @@ var kittenGenerator = {
 
         for (var i = 0; i < faces.length; i++) {
           var $img = $('<img>');
-          $img.attr('src', "http://facesofdave.org/" + faces[i].image);
+          $img.attr('src', faces[i].image);
           $('body').append($img);
         }
       }
@@ -36,27 +35,25 @@ var appOptions = {
     },
   },
 
-  get: function(index) {
+  get: function(index, callback) {
     if(typeof this._options[index] !== 'undefined') {
-      if(typeof localStorage[index] === 'string') {
-        switch(this._options[index].type) {
-          case 'boolean':
-            return localStorage[index] === 'true';
-            break;
-          case 'string':
-            return localStorage[index];
-            break;
-          case 'number':
-            return parseInt(localStorage[index]);
-            break;
+      chrome.storage.local.get(index, function(item) {
+        if(item[this.index] !== 'undefined') {
+          this.callback(item[this.index]);
+        } else {
+          this.callback(this.self._options[this.index].default);
         }
-        console.error('appOptions: unknown datatype!');
-      } else {
-        return this._options[index].default;
-      }
+      }.bind({self: this, index: index, callback: callback}));
     } else {
       console.error('appOptions: "' + index + '" is not defined');
     }
+  },
+
+  save: function(index, value) {
+    var obj = {};
+    obj[index] = value;
+
+    chrome.storage.local.set(obj);
   },
 
   getNames: function() {
@@ -74,7 +71,6 @@ var appOptions = {
   * this might also want to have a callback?
   *
   * @param {string} name (option name)
-  * @param {function} callback (on form change)
   * @return {jqueryObj} $input
   */
   getInputElement: function(name) {
@@ -82,12 +78,20 @@ var appOptions = {
 
     switch(this._options[name].type) {
       case 'boolean':
-        $input.attr('type', 'checkbox').prop('checked', this.get(name));
+        this.get(name, function(value) {
+          $input.attr('type', 'checkbox').prop('checked', value);
+        });
         break;
       case 'string':
       case 'number':
         break;
     }
+
+    _this = this;
+
+    $input.change(function(){
+      _this.save($(this).attr('name'), $(this).prop('checked'));
+    });
 
     return $input;
   },
